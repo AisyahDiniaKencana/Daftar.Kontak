@@ -19,4 +19,6 @@
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
     <string name="db">Daftar Kontak</string>
+    <string name="pp">Profil</string>
+    <string name="ud">Update Data</string>
 </resources>

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -27,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
 //    private dbKontak MyDatabase;
 //    private ArrayList<String> ListData;
     dbKontak mydb;
+
+    private Toolbar toolbar;
+    private ListView listView;
+    private ArrayAdapter<String> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,66 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        mydb = new dbKontak(this);
+        ArrayList array_list = mydb.getAllContacs();
+        ArrayAdapter arrayAdapter=new
+                ArrayAdapter(this,android.R.layout.simple_list_item_1, array_list);
+        obj = (ListView)findViewById(R.id.listView1);
+        obj.setAdapter(arrayAdapter);
+        obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int
+                    arg2, long arg3) {
+                // TODO Auto-generated method stub
+                int phone_To_Search = arg2 + 1;
+                Bundle dataBundle = new Bundle();
+                dataBundle.putInt("phone", phone_To_Search);
+                Intent intent = new
+                        Intent(getApplicationContext(), profil.class);
+                intent.putExtras(dataBundle);
+                startActivity(intent);
+
+            }
+        });
+
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        if(getSupportActionBar()!=null){
+//            getSupportActionBar().setElevation(5);
+//        }
+
+//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+//        for(int i=1;i<=20;i++){
+//            adapter.add("Data ke "+i);
+//        }
+//        listView = (ListView) findViewById(R.id.listView1);
+//        listView.setAdapter(adapter);
+//        registerForContextMenu(listView);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        menu.setHeaderTitle(adapter.getItem(info.position));
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id==R.id.Edit){
+            Toast.makeText(MainActivity.this, "Menu Edit", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(MainActivity.this, update.class);
+            startActivity(i);
+        }else if(id==R.id.Delete){
+            Toast.makeText(MainActivity.this, "Menu Delete", Toast.LENGTH_SHORT).show();
+        }
+        return super.onContextItemSelected(item);
+    }
+
+
 //        getSupportActionBar().setTitle("Daftar Mahasiswa");
 //        obj = findViewById(R.id.listView1);
 //        ListData = new ArrayList<>();
@@ -69,28 +137,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
 
-        mydb = new dbKontak(this);
-        ArrayList array_list = mydb.getAllContacs();
-        ArrayAdapter arrayAdapter=new
-                ArrayAdapter(this,android.R.layout.simple_list_item_1, array_list);
-        obj = (ListView)findViewById(R.id.listView1);
-        obj.setAdapter(arrayAdapter);
-        obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int
-                    arg2, long arg3) {
-                // TODO Auto-generated method stub
-                int phone_To_Search = arg2 + 1;
-                Bundle dataBundle = new Bundle();
-                dataBundle.putInt("phone", phone_To_Search);
-                Intent intent = new
-                        Intent(getApplicationContext(), profil.class);
-                intent.putExtras(dataBundle);
-                startActivity(intent);
 
-            }
-        });
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         super.onOptionsItemSelected(item);
